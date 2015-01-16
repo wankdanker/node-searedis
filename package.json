@@ -1,0 +1,18 @@
+{
+  "name": "searedis",
+  "version": "0.0.1",
+  "description": "Service Registry similar to Seaport but using Redis",
+  "main": "index.js",
+  "dependencies": {
+    "my-ip": "^1.1.1",
+    "redis": "^0.12.1",
+    "redis-jsonify": "^0.0.4",
+    "semver": "^4.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT"
+}

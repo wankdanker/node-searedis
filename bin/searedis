@@ -1,14 +1,15 @@
 #!/usr/bin/env nodejs
 
 var program = require('commander')
-    , package = require('./package')
-    , table = require('text-table')
+    , package = require('../package')
+    , SeaRedis = require('../')
     ;
 
 program
     .version(package.version)
-    .option('-h, --host <s>', 'redis server')
+    .option('-s, --server <s>', 'redis server')
     .option('-p, --port <n>', 'redis port', Number)
+    .option('-r, --role <s>', 'role when executing with run <cmd>')
     .parse(process.argv);
 
 if (!program.args.length) {
@@ -16,31 +17,19 @@ if (!program.args.length) {
 
 }
 
-var searedis = require('./').connect({
+var searedis = SeaRedis.connect({
     port : program.port || 6379
-    , host : program.host || '127.0.0.1'
+    , host : program.server || '127.0.0.1'
 });
 
-if (~program.args.indexOf('list')) {
-    searedis.query(function (err, services) {
-        var columns = ['role', 'version', 'address', 'port', 'id'];
-        var data    = [columns];
+var commands = {
+	list : require('./searedis-list')
+	, run : require('./searedis-run')
+};
 
-        data.push(['----', '-------', '-------', '----', '--']);
+(program.args || []).forEach(function (command) {
+	if (commands[command]) {
+		commands[command](program, searedis);
+	}
+});
 
-
-        services.forEach(function (service) {
-            var tmp = [];
-
-            columns.forEach(function (column) {
-                tmp.push(service[column]);
-            });
-
-            data.push(tmp);
-        });
-
-        console.log(table(data));
-
-        searedis.close();
-    });
-}

@@ -69,6 +69,8 @@ SeaRedis.prototype.close = function () {
 	self.free(function () {
 		self.redis.unref();
 		self.redisNotifications.unref();
+		self.redis.end();
+		self.redisNotifications.end();
 	});
 };
 

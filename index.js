@@ -115,14 +115,17 @@ SeaRedis.prototype.register = function (role, opts, cb) {
 		self.services[role] = self.services[role] || [];
 
 		register(service, function (err, result) {
-			if (result === 'OK') {
-				self.services[role].push(new SeaRedisService(service));
+			if (result !== 'OK') {
+				return cb(err);
 			}
 
-			service.interval = setInterval(function () {
+			var redservice = new SeaRedisService(service);
+			self.services[role].push(redservice);
+
+			redservice.interval = setInterval(function () {
 				self.redis.expire(service.key, self.registrationTimeout / 1000); 
 			}, self.registrationTimeout / 2);
-
+;
 			return cb(err, service);
 		});
 	});
